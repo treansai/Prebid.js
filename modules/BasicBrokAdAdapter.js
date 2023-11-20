@@ -9,7 +9,6 @@ const BIDDER_CODE = "basicbrokad";
 const CURRENCY = "USD";
 const ENDPOINT = "https://sp.bbrokad.fr/v3/prebid";
 const USER_SYNC_ENDPOINT = ""
-const GVLID = 0;
 const VERSION = "1";
 
 // storage def
@@ -154,6 +153,23 @@ function createRenderer(bid, rendererOptions = {}) {
         adUnitCode: bid.adUnitCode,
         loaded: false
     });
+    try {
+        renderer.setRender(({ renderer, width, height, vastXml, adUnitCode }) => {
+            renderer.push(() => {
+                window.onetag.Player.init({
+                    ...bid,
+                    width,
+                    height,
+                    vastXml,
+                    nodeId: adUnitCode,
+                    config: renderer.getConfig()
+                });
+            });
+        });
+    } catch (e) {
+
+    }
+    return renderer;
 }
 
 function getBidFloor(bidRequest, mediaType, sizes) {
